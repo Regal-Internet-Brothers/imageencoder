@@ -1,9 +1,6 @@
 
 // Includes:
 
-// Standard libpng functionality.
-#include <png.h>
-
 // C standard library functionality:
 #include <cstdlib>
 #include <cstdint>
