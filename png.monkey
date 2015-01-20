@@ -66,14 +66,11 @@ Import imageencoder
 	' Functions:
 	#If IMAGEENCODER_PNG_IMPLEMENTED
 		#If LANG = "cpp"
-			Function SavePNG:Bool(Path:String, PixelData:DataBuffer, Width:Int, Height:Int, Bit_Depth:Int=PNG_DEFAULT_IMAGE_DEPTH, Color_Type:Int=PNG_COLOR_TYPE_RGB_ALPHA, Interlace_Type:Int=PNG_INTERLACE_NONE, Compression_Type:Int=PNG_COMPRESSION_TYPE_DEFAULT, Filter_Type:Int=PNG_FILTER_TYPE_DEFAULT)="imageEncoder::PNG::save_to_file"
-			
-			#Rem
-				#Elseif LANG = "cs"
-					Function SavePNG:Bool(Path:String, PixelData:DataBuffer, Width:Int, Height:Int)="imageEncoder.PNG.save_to_file"
-				#Else
-					Function SavePNG:Bool(Path:String, PixelData:DataBuffer, Width:Int, Height:Int)="PNG_ImageEncoder.save_to_file"
-			#End
+			Function SavePNG:Bool(Path:String, PixelData:DataBuffer, Width:Int, Height:Int, PixelData_Offset_InBytes:Int=0, Bit_Depth:Int=PNG_DEFAULT_IMAGE_DEPTH, Color_Type:Int=PNG_COLOR_TYPE_RGB_ALPHA, Interlace_Type:Int=PNG_INTERLACE_NONE, Compression_Type:Int=PNG_COMPRESSION_TYPE_DEFAULT, Filter_Type:Int=PNG_FILTER_TYPE_DEFAULT)="imageEncoder::PNG::save_to_file"
+		#Elseif LANG = "cs"
+			Function SavePNG:Bool(Path:String, PixelData:DataBuffer, Width:Int, Height:Int, PixelData_Offset_InBytes:Int=0, Bit_Depth:Int=PNG_DEFAULT_IMAGE_DEPTH, Color_Type:Int=PNG_COLOR_TYPE_RGB_ALPHA, Interlace_Type:Int=PNG_INTERLACE_NONE, Compression_Type:Int=PNG_COMPRESSION_TYPE_DEFAULT, Filter_Type:Int=PNG_FILTER_TYPE_DEFAULT)="imageEncoder.PNG.save_to_file"
+		#Else
+			Function SavePNG:Bool(Path:String, PixelData:DataBuffer, Width:Int, Height:Int, PixelData_Offset_InBytes:Int=0, Bit_Depth:Int=PNG_DEFAULT_IMAGE_DEPTH, Color_Type:Int=PNG_COLOR_TYPE_RGB_ALPHA, Interlace_Type:Int=PNG_INTERLACE_NONE, Compression_Type:Int=PNG_COMPRESSION_TYPE_DEFAULT, Filter_Type:Int=PNG_FILTER_TYPE_DEFAULT)="PNG_ImageEncoder.save_to_file"
 		#End
 	#End
 	
@@ -83,8 +80,8 @@ Import imageencoder
 	#If IMAGEENCODER_PNG_IMPLEMENTED
 		' This simply acts as a wrapper for the external version.
 		' This is mainly useful for those who are using the 'LoadImageData' command.
-		Function SavePNG:Bool(Path:String, PixelData:DataBuffer, Size:Int[], Bit_Depth:Int=PNG_DEFAULT_IMAGE_DEPTH, Color_Type:Int=PNG_COLOR_TYPE_RGB_ALPHA, Interlace_Type:Int=PNG_INTERLACE_NONE, Compression_Type:Int=PNG_COMPRESSION_TYPE_DEFAULT, Filter_Type:Int=PNG_FILTER_TYPE_DEFAULT)
-			Return SavePNG(Path, PixelData, Size[0], Size[1], Bit_Depth, Color_Type, Interlace_Type, Compression_Type, Filter_Type)
+		Function SavePNG:Bool(Path:String, PixelData:DataBuffer, Size:Int[], PixelData_Offset_InBytes:Int=0, Bit_Depth:Int=PNG_DEFAULT_IMAGE_DEPTH, Color_Type:Int=PNG_COLOR_TYPE_RGB_ALPHA, Interlace_Type:Int=PNG_INTERLACE_NONE, Compression_Type:Int=PNG_COMPRESSION_TYPE_DEFAULT, Filter_Type:Int=PNG_FILTER_TYPE_DEFAULT)
+			Return SavePNG(Path, PixelData, Size[0], Size[1], PixelData_Offset_InBytes, Bit_Depth, Color_Type, Interlace_Type, Compression_Type, Filter_Type)
 		End
 	#End
 '#Else
