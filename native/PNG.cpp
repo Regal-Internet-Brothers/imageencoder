@@ -21,7 +21,7 @@
 
 // C standard library functionality:
 #include <cstdio>
-#include <cstdlib>
+//#include <cstdlib>
 
 // Namespaces:
 namespace imageEncoder
@@ -31,15 +31,9 @@ namespace imageEncoder
 		// Constant variable(s):
 		
 		// This acts as the internal bit-depth used for PNG encoding.
-		static const int IMAGE_DEPTH = 8; // 16;
+		static const int DEFAULT_IMAGE_DEPTH = 8; // 16;
 		
 		// Functions:
-		
-		// This is currently unused, and may removed.
-		pixel* pixel_at(pixel* pixels, size_t width, size_t x, size_t y)
-		{
-			return pixels + (width * y) + x;
-		}
 		
 		/*
 			In the event saving wasn't successful, this command will return 'false'.
@@ -49,17 +43,17 @@ namespace imageEncoder
 			The 'stream' argument should point to a standard C stream.
 			This argument is not checked if it is 'NULL'.
 			
-			The 'imageData' argument should be an array of 'pixels', however,
-			data-pointers are commonly statically casted to work with this type.
+			The 'imageData' argument should be an array of pixels,
+			formatted according to the arguments you pass in.
 			
 			A standard raw RGBA bitmap is already in the
-			proper format, and can be casted without issues.
+			proper format by default, and can be used without issues.
 			
 			The 'width' and 'height' arguments should specify
 			the dimensions of the 'imageData' argument.
 		*/
 		
-		bool save_to_stream(FILE* stream, pixel* imageData, size_t width, size_t height)
+		bool save_to_stream(FILE* stream, png_byte* imageData, size_t width, size_t height, int bit_depth=DEFAULT_IMAGE_DEPTH, int color_type=PNG_COLOR_TYPE_RGB_ALPHA, int interlace_type=PNG_INTERLACE_NONE, int compression_type=PNG_COMPRESSION_TYPE_DEFAULT, int filter_type=PNG_FILTER_TYPE_DEFAULT)
 		{
 			// Local variable(s):
 			
@@ -95,8 +89,8 @@ namespace imageEncoder
 			
 			// Assign the data specified to the "info-structure":
 			// 'PNG_COLOR_TYPE_RGBA' may be switched out at some point for a real system:
-			png_set_IHDR(png_ptr, info_ptr, width, height, IMAGE_DEPTH,
-			PNG_COLOR_TYPE_RGB_ALPHA, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+			png_set_IHDR(png_ptr, info_ptr, width, height, bit_depth,
+			color_type, interlace_type, compression_type, filter_type);
 			
 			// Allocate an array of pointers for libpng's 'png_set_rows' command.
 			// This is allocated on the heap due to its variable size.
@@ -105,8 +99,8 @@ namespace imageEncoder
 			// Initialize each row of the image:
 			for (size_t y = 0; y < height; ++y)
 			{
-				//png_byte* row = (png_byte*)png_malloc(png_ptr, sizeof(uint8_t) * width * sizeof(pixel));
-				row_pointers[y] = (png_byte*)(imageData + (width * y));
+				//png_byte* row = (png_byte*)png_malloc(png_ptr, sizeof(png_byte) * width * sizeof(pixel));
+				row_pointers[y] = (png_byte*)(imageData + ((width * y) * sizeof(pixel)));
 				
 				// Deprecated:
 				/*
@@ -151,7 +145,7 @@ namespace imageEncoder
 		}
 		
 		// This acts as a standard file/disk I/O wrapper for the main 'save_to_stream' function.
-		bool save_to_file(const char* path, pixel* imageData, size_t width, size_t height)
+		bool save_to_file(const char* path, png_byte* imageData, size_t width, size_t height, int bit_depth=DEFAULT_IMAGE_DEPTH, int color_type=PNG_COLOR_TYPE_RGB_ALPHA, int interlace_type=PNG_INTERLACE_NONE, int compression_type=PNG_COMPRESSION_TYPE_DEFAULT, int filter_type=PNG_FILTER_TYPE_DEFAULT)
 		{
 			// This will act as our file-descriptor.
 			FILE* fp;
@@ -164,7 +158,7 @@ namespace imageEncoder
 				return false;
 			
 			// Execute the main routine.
-			bool response = save_to_stream(fp, imageData, width, height);
+			bool response = save_to_stream(fp, imageData, width, height, bit_depth, color_type, interlace_type, compression_type, filter_type);
 			
 			// Close the file descriptor.
 			fclose(fp);
@@ -174,9 +168,9 @@ namespace imageEncoder
 		}
 		
 		// This acts as the Monkey-wrapper for the main implementation of 'save_to_file'.
-		int save_to_file(String path, BBDataBuffer* imageData, int width, int height)
+		bool save_to_file(String path, BBDataBuffer* imageData, int width, int height, int bit_depth=DEFAULT_IMAGE_DEPTH, int color_type=PNG_COLOR_TYPE_RGB_ALPHA, int interlace_type=PNG_INTERLACE_NONE, int compression_type=PNG_COMPRESSION_TYPE_DEFAULT, int filter_type=PNG_FILTER_TYPE_DEFAULT)
 		{
-			return save_to_file(path.ToCString<char>(), (pixel*)imageData->ReadPointer(), (size_t)width, (size_t)height);
+			return save_to_file(path.ToCString<char>(), (png_byte*)imageData->ReadPointer(), (size_t)width, (size_t)height, bit_depth, color_type, interlace_type, compression_type, filter_type);
 		}
 	}
 }

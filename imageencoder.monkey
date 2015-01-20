@@ -43,6 +43,11 @@ Public
 		Direct support for arrays is currently unavailable.
 		
 		* PNG image-encoding only supports RGBA at this time.
+		
+		* Naming conventions in native code do not corrispond to Monkey-code.
+		For example, what may be format-agnostic in native code may be explicit when wrapped.
+		These commands will remain consistent from Monkey's perspective,
+		but they may be backed by different native code later on.
 	TODO:
 		* Add further PNG compression options.
 		* Add support for non-RGBA image formats.
@@ -63,53 +68,18 @@ Public
 ' Preprocessor related:
 #IMAGEENCODER_IMPLEMENTED = True
 
-' Libraries (GCC/MinGW)
-#CC_LIBS += "-lpng"
-
-' I'm pretty sure this is the correct library name.
-#CC_LIBS += "-lz"
-
-#If LANG = "cpp"
-	#IMAGEENCODER_NATIVE = True
-	#IMAGEENCODER_PNG_IMPLEMENTED = True
-#End
-
 ' Imports:
+
+' External (Monkey):
 
 ' Standard 'DataBuffer' functionality is used for image encoding.
 Import brl.databuffer
 
-' Native code:
+'Import typetool
+
+' Internal (Monkey):
+Import external
+
 #If IMAGEENCODER_NATIVE
-	Import "native/Encoder.${LANG}"
-	
-	#If IMAGEENCODER_PNG_IMPLEMENTED
-		Import "native/PNG.${LANG}"
-	#End
-#End
-
-' External bindings:
-
-Extern
-
-' Functions:
-#If IMAGEENCODER_PNG_IMPLEMENTED
-	#If LANG = "cpp"
-		Function SavePNG:Bool(Path:String, PixelData:DataBuffer, Width:Int, Height:Int)="imageEncoder::PNG::save_to_file"
-	#Elseif LANG = "cs"
-		Function SavePNG:Bool(Path:String, PixelData:DataBuffer, Width:Int, Height:Int)="imageEncoder.PNG.save_to_file"
-	#Else
-		Function SavePNG:Bool(Path:String, PixelData:DataBuffer, Width:Int, Height:Int)="PNG_ImageEncoder.save_to_file"
-	#End
-#End
-
-Public
-
-' Functions (Monkey):
-#If IMAGEENCODER_PNG_IMPLEMENTED
-	' This simply acts as a wrapper for the external version.
-	' This is mainly useful for those who are using the 'LoadImageData' command.
-	Function SavePNG:Bool(Path:String, PixelData:DataBuffer, Size:Int[])
-		Return SavePNG(Path, PixelData, Size[0], Size[1])
-	End
+	Import png
 #End
