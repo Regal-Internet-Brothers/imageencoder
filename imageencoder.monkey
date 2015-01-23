@@ -49,11 +49,13 @@ Public
 		These commands will remain consistent from Monkey's perspective,
 		but they may be backed by different native code later on.
 	TODO:
-		* Add further PNG compression options.
-		* Add support for non-RGBA image formats.
+		X Add further PNG compression options.
+		X Add support for non-RGBA image formats.
+		
+		/ Add support for arrays (Optimized and unoptimized)
+		
 		* Add image-encoding support for BMP files.
 		* Add image-encoding support for JPEG files.
-		* Add support for arrays (Optimized and unoptimized)
 		
 		* Add support for image decoding; already provided by 'opengl.gles11', currently.
 		If I were to add this, this module's source code would likely be
@@ -67,6 +69,9 @@ Public
 
 ' Preprocessor related:
 #IMAGEENCODER_IMPLEMENTED = True
+
+' Enabling this will cause this module to delegate experimental functionality.
+'#IMAGEENCODER_EXPERIMENTAL = False ' True
 
 ' Imports:
 

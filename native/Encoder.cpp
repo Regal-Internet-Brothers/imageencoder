@@ -33,6 +33,14 @@ namespace imageEncoder
 	
 	// Functions:
 	
+	#if defined(CFG_IMAGEENCODER_EXPERIMENTAL)
+		// This is currently non-standard, and may cause problems.
+		template<typename T> T* readPointer(Array<T> MArray, size_t MArray_Offset=0)
+		{
+			return (T*)&MArray[MArray_Offset];
+		}
+	#endif
+	
 	/*
 		This command will retrieve a pixel at the location specified.
 		

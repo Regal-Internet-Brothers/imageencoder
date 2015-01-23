@@ -176,5 +176,15 @@ namespace imageEncoder
 		{
 			return save_to_file(path.ToCString<char>(), rawData(imageData->ReadPointer((imageData_Offset_InBytes*sizeof(png_byte)))), (size_t)width, (size_t)height, bit_depth, color_type, interlace_type, compression_type, filter_type);
 		}
+		
+		#if defined(CFG_IMAGEENCODER_PNG_EXPERIMENTAL)
+			// This acts as a experimental Monkey-wrapper for the main implementation of 'save_to_file':
+			
+			// This currently uses non-standard means of retrieving data.
+			bool save_to_file(String path, Array<int> imageData, int width, int height, int imageData_Offset, int bit_depth=DEFAULT_IMAGE_DEPTH, int color_type=PNG_COLOR_TYPE_RGB_ALPHA, int interlace_type=PNG_INTERLACE_NONE, int compression_type=PNG_COMPRESSION_TYPE_DEFAULT, int filter_type=PNG_FILTER_TYPE_DEFAULT)
+			{
+				return save_to_file(path.ToCString<char>(), rawData(readPointer(imageData, (size_t)imageData_Offset)), (size_t)width, (size_t)height, bit_depth, color_type, interlace_type, compression_type, filter_type);
+			}
+		#endif
 	}
 }
