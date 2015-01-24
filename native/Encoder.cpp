@@ -1,13 +1,34 @@
 
+// Preprocessor reltated:
+// Nothing so far.
+
 // Includes:
 
 // C standard library functionality:
 #include <cstdlib>
-#include <cstdint>
+
+// Due to C++11 dependence, this is no longer used.
+//#include <cstdint>
 
 // Namespaces:
 namespace imageEncoder
 {
+	// Typedefs/Aliases:
+	
+	// This is used for string-management internally.
+	typedef char character;
+	
+	// This acts as the standard color type to be
+	// used inside of the default 'pixel' structure.
+	typedef unsigned char color;
+	
+	// This is used as a general purpose byte (Octet) type-name.
+	typedef unsigned char byte;
+	
+	// C++ '11 versions:
+	// typedef uint8_t color;
+	// typedef uint8_t byte;
+	
 	// Structures:
 	
 	/*
@@ -25,21 +46,33 @@ namespace imageEncoder
 	typedef struct pixel_RGBA
 	{
 		// Colors:
-		uint8_t red;
-		uint8_t green;
-		uint8_t blue;
-		uint8_t alpha;
+		color red;
+		color green;
+		color blue;
+		color alpha;
 	} pixel;
 	
 	// Functions:
 	
+	// This acts as a macro for 'String' conversion within this Monkey module.
+	String::CString<character> toCString(String s)
+	{
+		return s.ToCString<character>();
+	}
+	
 	#if defined(CFG_IMAGEENCODER_EXPERIMENTAL)
 		// This is currently non-standard, and may cause problems.
-		template<typename T> T* readPointer(Array<T> MArray, size_t MArray_Offset=0)
+		template<typename outputType, typename arrayType> outputType* readPointer(Array<arrayType> MArray, size_t MArray_Offset=0)
 		{
-			return (T*)&MArray[MArray_Offset];
+			return (outputType*)(&MArray[MArray_Offset]);
 		}
 	#endif
+	
+	// The 'offset' argument is dependent on the size of 'T'.
+	template<typename T> T* readPointer(BBDataBuffer* data, size_t offset=0)
+	{
+		return (T*)data->ReadPointer(offset*sizeof(T));
+	}
 	
 	/*
 		This command will retrieve a pixel at the location specified.
@@ -58,7 +91,7 @@ namespace imageEncoder
 		return pixels + (width * y) + x;
 	}
 	
-	template<typename dimension> pixel* pixel_at(uint8_t* pixels, dimension width, dimension x, dimension y)
+	template<typename dimension> pixel* pixel_at(byte* pixels, dimension width, dimension x, dimension y)
 	{
 		return pixel_at<dimension>((pixel*)pixels, width, x, y);
 	}
@@ -67,7 +100,7 @@ namespace imageEncoder
 	// This, like the above overloads, is completely "unsafe"; use at your own risk.
 	pixel* pixel_at(BBDataBuffer* pixelData, int width, int x, int y, int offset_InBytes=0)
 	{
-		return pixel_at<int>(((uint8_t*)pixelData->ReadPointer())+(offset_InBytes*sizeof(uint8_t)), width, x, y);
+		return pixel_at<int>(((byte*)pixelData->ReadPointer())+(offset_InBytes*sizeof(byte)), width, x, y);
 	}
 	
 	// For a description of this command, please see the 'imageencoder' module in Monkey.
