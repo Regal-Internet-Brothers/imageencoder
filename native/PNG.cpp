@@ -59,9 +59,12 @@ namespace imageEncoder
 		{
 			// Local variable(s):
 			
-			// I'm leaving these variables at the top,
-			// just for the sake of better potential C compatibility.
-			png_byte** row_pointers;
+			// I'm leaving these variables at the top, just for the
+			// sake of better potential C compatibility:
+			
+			// For safety reasons, this has to be manually set to 'NULL'.
+			png_byte** row_pointers = NULL;
+			
 			png_structp png_ptr;
 			png_infop info_ptr;
 			
@@ -73,7 +76,7 @@ namespace imageEncoder
 			// Ensure we were able to allocate a "write-structure":
 			if (png_ptr == NULL)
 			{
-				// Tell the user we couldn't save to the output-stream.
+				// Tell the user that we couldn't save to the output-stream.
 				return false;
 			}
 			
@@ -87,19 +90,22 @@ namespace imageEncoder
 				// destroy our already allocated "write-structure", then return 'false'.
 				png_destroy_write_struct(&png_ptr, NULL);
 				
-				// Tell the user we couldn't save to the output-stream.
+				// Tell the user that we couldn't save to the output-stream.
 				return false;
 			}
 			
 			// Standard error handling:
-			/*
 			if (setjmp(png_jmpbuf(png_ptr)))
 			{
+				// Check if we should free the row-pointers:
+				if (row_pointers != NULL)
+					png_free(png_ptr, row_pointers);
+				
 				png_destroy_write_struct(&png_ptr, &info_ptr);
 				
+				// Tell the user that execution was not successful.
 				return false;
 			}
-			*/
 			
 			// Assign the data specified to the "info-structure":
 			png_set_IHDR(png_ptr, info_ptr, width, height, bit_depth,
@@ -165,6 +171,8 @@ namespace imageEncoder
 		// please read the 'save_to_file_safe' command's documentation.
 		bool save_to_file(const character* path, png_byte* imageData, size_t width, size_t height, int bit_depth=DEFAULT_IMAGE_DEPTH, int color_type=PNG_COLOR_TYPE_RGB_ALPHA, int interlace_type=PNG_INTERLACE_NONE, int compression_type=PNG_COMPRESSION_TYPE_DEFAULT, int filter_type=PNG_FILTER_TYPE_DEFAULT)
 		{
+			// Local variable(s):
+			
 			// This will act as our file-descriptor.
 			FILE* fp;
 			
@@ -176,7 +184,8 @@ namespace imageEncoder
 				return false;
 			
 			// Execute the main routine.
-			bool response = save_to_stream(fp, imageData, width, height, bit_depth, color_type, interlace_type, compression_type, filter_type);
+			bool response = save_to_stream(fp, imageData, width, height, bit_depth,
+			color_type, interlace_type, compression_type, filter_type);
 			
 			// Close the file descriptor.
 			fclose(fp);
@@ -206,32 +215,25 @@ namespace imageEncoder
 		bool save_to_file_safe(const character* path, png_byte* imageData, png_uint_32 width, png_uint_32 height, int depth=DEFAULT_IMAGE_DEPTH, int color_type=PNG_COLOR_TYPE_RGB_ALPHA, png_int_32 internal__row_stride=0)
 		{
 			// Local variable(s):
-			png_image img;
-			
-			// "Zero-out" the structure before doing anything else.
-			memset(&img, 0, sizeof(img));
-			
-			img.width = width;
-			img.height = height;
-			img.version = PNG_IMAGE_VERSION;
+			int format;
 			
 			// Attempt to re-encode the color-type specified into proper flags:
 			switch (color_type)
 			{
 				case PNG_COLOR_TYPE_GRAY:
-					img.format = PNG_FORMAT_GRAY;
+					format = PNG_FORMAT_GRAY;
 					
 					break;
 				case PNG_COLOR_TYPE_GA:
-					img.format = PNG_FORMAT_GA;
+					format = PNG_FORMAT_GA;
 					
 					break;
 				case PNG_COLOR_TYPE_RGB:
-					img.format = PNG_FORMAT_RGB;
+					format = PNG_FORMAT_RGB;
 					
 					break;
 				case PNG_COLOR_TYPE_RGBA:
-					img.format = PNG_FORMAT_RGBA;
+					format = PNG_FORMAT_RGBA;
 					
 					break;
 				default:
@@ -239,6 +241,17 @@ namespace imageEncoder
 					
 					//break;
 			}
+			
+			// This acts as the standard container used for image I/O.
+			png_image img;
+			
+			// "Zero-out" the structure before doing anything else.
+			memset(&img, 0, sizeof(img));
+			
+			img.width = width;
+			img.height = height;
+			img.format = format;
+			img.version = PNG_IMAGE_VERSION;
 			
 			// Write and encode the image-data to the file-path specified, then return an appropriate response.
 			return (png_image_write_to_file(&img, path, (int)(depth == 16),
