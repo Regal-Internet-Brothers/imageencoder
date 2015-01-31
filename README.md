@@ -14,4 +14,4 @@ This module provides basic image-encoding functionality to the [Monkey programmi
 
 ## Dependencies:
 **C++ Dependencies:**
-* *PNG*: [libpng](http://www.libpng.org/pub/png/libpng.html) (And be extension, [zlib](http://www.zlib.net); *zlib is already provided with some distributions of libpng*)
+* *PNG*: [libpng](http://www.libpng.org/pub/png/libpng.html) (And by extension, [zlib](http://www.zlib.net); *zlib is already provided with some distributions of libpng*)
