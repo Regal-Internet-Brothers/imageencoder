@@ -13,7 +13,7 @@ Public
 #End
 
 ' Imports (Monkey):
-Import imageencoder
+Import imageencoder ' regal.imageencoder
 
 ' Internal (Native):
 #If IMAGEENCODER_NATIVE

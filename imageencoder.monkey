@@ -80,7 +80,7 @@ Public
 ' Standard 'DataBuffer' functionality is used for image encoding.
 Import brl.databuffer
 
-'Import typetool
+'Import regal.typetool
 
 ' Internal (Monkey):
 Import external
