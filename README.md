@@ -1,7 +1,9 @@
 # imageencoder
+
+## Description
 This module provides basic image-encoding functionality to the [Monkey programming language](https://github.com/blitz-research/monkey). Format availability varies between targets and languages.
 
-## **Supported formats:**
+### **Supported formats:**
 * [PNG](http://en.wikipedia.org/wiki/Portable_Network_Graphics) (C++)
 
 ### **NOTES:**
@@ -12,6 +14,13 @@ This module provides basic image-encoding functionality to the [Monkey programmi
 * Each supported image-format has its own preprocessor-based implementation-flag(s), these normally can be forced to 'False' if you are unable to use a specific format.
 * For more notes and to-do information, please read the comments found in the main module.
 
-## Dependencies:
+### Dependencies:
 **C++ Dependencies:**
 * *PNG*: [libpng](http://www.libpng.org/pub/png/libpng.html) (And by extension, [zlib](http://www.zlib.net); *zlib is already provided with some distributions of libpng*)
+
+## Installation
+This module is officially available from the [Regal Modules](https://github.com/Regal-Internet-Brothers/regal-modules#regal-modules) project, and may be installed by following the installation guide provided with that repository.
+
+Although this can be installed with the Regal Modules, this particular module aims to be as dependency free as possible. This means the only requirements this module has are covered by the ["standard library"](https://github.com/blitz-research/monkey/tree/develop/modules) provided with Monkey. This means this module may be used as a completely separate entity, without being tied to '[regal](https://github.com/Regal-Internet-Brothers/regal-modules)'.
+
+Import syntax varies with usage, with the official distribution using 'regal' as a parent namespace. (e.g. regal.imageencoder)
